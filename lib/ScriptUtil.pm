@@ -3,6 +3,7 @@ package ScriptUtil;
 use 5.008008;
 use strict;
 use warnings;
+use Cwd;
 use Fcntl qw(:flock);
 use Benchmark;
 use File::Log;
@@ -11,6 +12,8 @@ use File::Spec;
 use Carp qw(carp confess);
 use Moose;
 use File::Basename;
+
+our $VERSION   = '0.02';
 
 extends 'Moose::Object';
 
@@ -36,7 +39,7 @@ has 'logger'                => ( isa => 'File::Log', is => 'rw', required => 0, 
 has 'log_rotation'          => ( isa => 'Bool', is => 'ro', required => 0, default => 0 );
 has 'log_zip_after_days'    => ( isa => 'Num', is => 'ro', required => 0, default => 2 );
 has 'log_rm_after_days'     => ( isa => 'Num', is => 'ro', required => 0, default => 31 );
-has '_log_pattern'           => ( isa => 'Str', is => 'ro', required => 0, default => '.log' );
+has '_log_pattern'          => ( isa => 'Str', is => 'ro', required => 0, default => '.log' );
 
 ################################################################################
 # Methods
@@ -100,7 +103,7 @@ sub new {
     
     # Move into the scripts working directory:
     my $dirname = dirname($parent);
-    $self->echo("Moving into path:   [" . $dirname . "]");
+    $self->echo("Moving into path:   [" . $dirname . "] (" . getcwd() . ")");
     chdir($dirname);
     
     # Rotate logs if required:
@@ -525,6 +528,20 @@ Takes a string as an argument, returns a string.
 =item * File::Basename
 
 =back
+
+=head1 VERSION
+
+ 0.02
+ 
+=head1 CHANGE LOG
+
+=head2 0.01
+
+Initial release
+
+=head2 0.02
+
+Updated Makfile.PL to correct dependancy problems
 
 =head1 AUTHOR
 
